@@ -1,38 +1,27 @@
 package jm.task.core.jdbc;
 
-import jm.task.core.jdbc.model.User;
 import jm.task.core.jdbc.service.UserServiceImpl;
-import jm.task.core.jdbc.util.Util;
-
-import java.sql.SQLException;
+import jm.task.core.jdbc.util.Hib_Util;
 
 public class Main {
     public static void main(String[] args) {
 
         // реализуйте алгоритм здесь
-        try {
+        UserServiceImpl userService = new UserServiceImpl();
 
-            var userService = new UserServiceImpl();
+        userService.createUsersTable();
 
-            userService.createUsersTable();
-            userService.saveUser("Кот", "Матроскин", (byte) 3);
-            userService.saveUser("Пёс", "Шарик", (byte) 2);
-            userService.saveUser("Галчонок", "Хватайка", (byte) 0);
-            userService.saveUser("Почтальон", "Печкин", (byte) 50);
+        userService.saveUser("Ivan", "Ivanov", (byte) 20);
+        userService.saveUser("Petr", "Petrov", (byte) 25);
+        userService.saveUser("Alexey", "Alexeev", (byte) 30);
+        userService.saveUser("Dmitry", "Dmitriev", (byte) 35);
 
-            System.out.println("-----------------------");
-            userService.getAllUsers().forEach(System.out::println);
+        userService.removeUserById(1);
+        System.out.println(userService.getAllUsers());
+        userService.cleanUsersTable();
 
-//        userService.removeUserById(3);
-//        userService.cleanUsersTable();
 //        userService.dropUsersTable();
 
-        } finally {
-            Util.closePull();
-        }
-
-
-
-
+        Hib_Util.closeSessionFactory();
     }
 }

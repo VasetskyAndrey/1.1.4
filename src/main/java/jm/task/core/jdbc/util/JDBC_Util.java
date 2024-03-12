@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
-public final class Util {
+public final class JDBC_Util {
 
     // реализуйте настройку соеденения с БД
 
@@ -27,13 +27,13 @@ public final class Util {
         initConnectionPool();
     }
 
-    private Util() {
+    private JDBC_Util() {
     }
 
     private static void initConnectionPool() {
 
-        var poolSize = PropertiesUtil.get(POOL_SIZE_KEY);
-        var defaultPoolSize = PropertiesUtil.get(DEFAULT_POOL_SIZE_KEY);
+        var poolSize = PropertiesRead_Util.get(POOL_SIZE_KEY);
+        var defaultPoolSize = PropertiesRead_Util.get(DEFAULT_POOL_SIZE_KEY);
 
         var size = poolSize == null ? Integer.parseInt(defaultPoolSize) : Integer.parseInt(poolSize);
 
@@ -43,7 +43,7 @@ public final class Util {
         for (int i = 0; i < size; i++) {
 
             var connection = open();
-            var proxyConnection = (Connection) Proxy.newProxyInstance(Util.class.getClassLoader(), new Class[]{Connection.class},
+            var proxyConnection = (Connection) Proxy.newProxyInstance(JDBC_Util.class.getClassLoader(), new Class[]{Connection.class},
                     (proxy, method, args) -> method.getName().equals("close")
                             ? pool.add((Connection) proxy)
                             : method.invoke(connection, args));
@@ -65,9 +65,9 @@ public final class Util {
 
         try {
             return DriverManager.getConnection(
-                    PropertiesUtil.get(URL_KEY),
-                    PropertiesUtil.get(LOGIN_KEY),
-                    PropertiesUtil.get(PASSWORD_KEY)
+                    PropertiesRead_Util.get(URL_KEY),
+                    PropertiesRead_Util.get(LOGIN_KEY),
+                    PropertiesRead_Util.get(PASSWORD_KEY)
             );
         } catch (SQLException e) {
             System.out.println("Не удалось получить соединение с БД");

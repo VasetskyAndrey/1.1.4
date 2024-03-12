@@ -5,7 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Properties;
 
-public final class PropertiesUtil {
+public final class PropertiesRead_Util {
 
     private static final Properties PROPERTIES = new Properties();
     private static final String PATH = "src/main/resources/application.properties";
@@ -14,7 +14,7 @@ public final class PropertiesUtil {
         loadProperties();
     }
 
-    private PropertiesUtil() {
+    private PropertiesRead_Util() {
     }
 
     private static void loadProperties() {

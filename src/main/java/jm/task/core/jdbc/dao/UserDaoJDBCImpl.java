@@ -1,7 +1,7 @@
 package jm.task.core.jdbc.dao;
 
 import jm.task.core.jdbc.model.User;
-import jm.task.core.jdbc.util.Util;
+import jm.task.core.jdbc.util.JDBC_Util;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -22,7 +22,7 @@ public class UserDaoJDBCImpl implements UserDao {
                 );
                 """;
 
-        try (var connection = Util.get();
+        try (var connection = JDBC_Util.get();
              var statement = connection.createStatement()
         ) {
 //            if (statement.execute(sql)) {
@@ -39,7 +39,7 @@ public class UserDaoJDBCImpl implements UserDao {
                 DROP TABLE IF EXISTS users
                 """;
 
-        try (var connection = Util.get();
+        try (var connection = JDBC_Util.get();
              var statement = connection.createStatement()
         ) {
             statement.execute(sql);
@@ -54,7 +54,7 @@ public class UserDaoJDBCImpl implements UserDao {
                 VALUES (?,?,?)
                 """;
 
-        try (var connection = Util.get();
+        try (var connection = JDBC_Util.get();
              var preparedStatement = connection.prepareStatement(sql)
         ) {
             preparedStatement.setString(1, name);
@@ -74,7 +74,7 @@ public class UserDaoJDBCImpl implements UserDao {
                 WHERE id = ?
                 """;
 
-        try (var connection = Util.get();
+        try (var connection = JDBC_Util.get();
              var preparedStatement = connection.prepareStatement(sql)
         ) {
             preparedStatement.setLong(1, id);
@@ -95,7 +95,7 @@ public class UserDaoJDBCImpl implements UserDao {
                 FROM users
                 """;
 
-        try (var connection = Util.get();
+        try (var connection = JDBC_Util.get();
              var statement = connection.createStatement()
         ) {
             var resultSet = statement.executeQuery(sql);
@@ -125,7 +125,7 @@ public class UserDaoJDBCImpl implements UserDao {
                 RESTART WITH 1
                 """;
 
-        try (var connection = Util.get();
+        try (var connection = JDBC_Util.get();
              var statement = connection.createStatement()
         ) {
             statement.execute(sql);
