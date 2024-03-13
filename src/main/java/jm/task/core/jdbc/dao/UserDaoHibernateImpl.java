@@ -35,7 +35,7 @@ public class UserDaoHibernateImpl implements UserDao {
             session.createNativeQuery(sql).executeUpdate();
             transaction.commit();
         } catch (Exception e) {
-            checkTransaction(transaction);
+            rollbackTransaction(transaction);
             throw new RuntimeException("Не удалось создать таблицу", e);
         }
     }
@@ -53,7 +53,7 @@ public class UserDaoHibernateImpl implements UserDao {
             session.createNativeQuery(sql).executeUpdate();
             transaction.commit();
         } catch (Exception e) {
-            checkTransaction(transaction);
+            rollbackTransaction(transaction);
             throw new RuntimeException("Не удалось удалить таблицу", e);
         }
 
@@ -71,7 +71,7 @@ public class UserDaoHibernateImpl implements UserDao {
             session.persist(user);
             transaction.commit();
         } catch (Exception e) {
-            checkTransaction(transaction);
+            rollbackTransaction(transaction);
             throw new RuntimeException("Не удалось сохранить пользователя", e);
         }
     }
@@ -89,7 +89,7 @@ public class UserDaoHibernateImpl implements UserDao {
             }
             transaction.commit();
         } catch (Exception e) {
-            checkTransaction(transaction);
+            rollbackTransaction(transaction);
             throw new RuntimeException("Не удалось удалить пользователя", e);
         }
 
@@ -116,13 +116,13 @@ public class UserDaoHibernateImpl implements UserDao {
             session.createQuery("DELETE FROM User").executeUpdate();
             transaction.commit();
         } catch (Exception e) {
-            checkTransaction(transaction);
+            rollbackTransaction(transaction);
             throw new RuntimeException("Не удалось очистить таблицу", e);
         }
 
     }
 
-    public void checkTransaction(Transaction t) {
+    public void rollbackTransaction(Transaction t) {
         if (t != null && t.isActive()) {
             t.rollback();
         }
