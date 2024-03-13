@@ -4,6 +4,7 @@ import jm.task.core.jdbc.model.User;
 import jm.task.core.jdbc.util.Hib_Util;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
 import java.util.List;
@@ -27,11 +28,14 @@ public class UserDaoHibernateImpl implements UserDao {
                 );
                 """;
 
+        Transaction transaction = null;
+
         try (Session session = sessionFactory.openSession()) {
-            session.beginTransaction();
+            transaction = session.beginTransaction();
             session.createNativeQuery(sql).executeUpdate();
-            session.getTransaction().commit();
+            transaction.commit();
         } catch (Exception e) {
+            checkTransaction(transaction);
             throw new RuntimeException("Не удалось создать таблицу", e);
         }
     }
@@ -42,11 +46,14 @@ public class UserDaoHibernateImpl implements UserDao {
                 DROP TABLE IF EXISTS users
                 """;
 
+        Transaction transaction = null;
+
         try (Session session = sessionFactory.openSession()) {
-            session.beginTransaction();
+            transaction = session.beginTransaction();
             session.createNativeQuery(sql).executeUpdate();
-            session.getTransaction().commit();
+            transaction.commit();
         } catch (Exception e) {
+            checkTransaction(transaction);
             throw new RuntimeException("Не удалось удалить таблицу", e);
         }
 
@@ -55,26 +62,34 @@ public class UserDaoHibernateImpl implements UserDao {
 
     @Override
     public void saveUser(String name, String lastName, byte age) {
+
+        Transaction transaction = null;
+
         try (Session session = sessionFactory.openSession()) {
-            session.beginTransaction();
+            transaction = session.beginTransaction();
             User user = new User(name, lastName, age);
             session.persist(user);
-            session.getTransaction().commit();
+            transaction.commit();
         } catch (Exception e) {
+            checkTransaction(transaction);
             throw new RuntimeException("Не удалось сохранить пользователя", e);
         }
     }
 
     @Override
     public void removeUserById(long id) {
+
+        Transaction transaction = null;
+
         try (Session session = sessionFactory.openSession()) {
-            session.beginTransaction();
+            transaction = session.beginTransaction();
             User user = session.get(User.class, id);
             if (user != null) {
                 session.remove(user);
             }
-            session.getTransaction().commit();
+            transaction.commit();
         } catch (Exception e) {
+            checkTransaction(transaction);
             throw new RuntimeException("Не удалось удалить пользователя", e);
         }
 
@@ -82,6 +97,7 @@ public class UserDaoHibernateImpl implements UserDao {
 
     @Override
     public List<User> getAllUsers() {
+
         try (Session session = sessionFactory.openSession()) {
             Query<User> query = session.createQuery("from User", User.class);
             return query.list();
@@ -92,13 +108,26 @@ public class UserDaoHibernateImpl implements UserDao {
 
     @Override
     public void cleanUsersTable() {
+
+        Transaction transaction = null;
+
         try (Session session = sessionFactory.openSession()) {
-            session.beginTransaction();
+            transaction = session.beginTransaction();
             session.createQuery("DELETE FROM User").executeUpdate();
-            session.getTransaction().commit();
+            transaction.commit();
         } catch (Exception e) {
+            checkTransaction(transaction);
             throw new RuntimeException("Не удалось очистить таблицу", e);
         }
 
     }
+
+    public void checkTransaction(Transaction t) {
+        if (t != null && t.isActive()) {
+            t.rollback();
+        }
+    }
+
+
+
 }

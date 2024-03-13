@@ -11,13 +11,12 @@ import java.util.concurrent.BlockingQueue;
 
 public final class JDBC_Util {
 
-    // реализуйте настройку соеденения с БД
+    // реализуйте настройку соединения с БД
 
-    public static final String URL_KEY = "db.url";
-    public static final String LOGIN_KEY = "db.login";
-    public static final String PASSWORD_KEY = "db.password";
-    public static final String POOL_SIZE_KEY = "db.pool.size";
-    public static final String DEFAULT_POOL_SIZE_KEY = "db.default.pool.size";
+    public static final String URL = "jdbc:postgresql://localhost:5432/postgres";
+    public static final String LOGIN = "postgres";
+    public static final String PASSWORD = "admin";
+    public static final String POOL = "5";
 
     public static BlockingQueue<Connection> pool;
     public static List<Connection> sourceConnections;
@@ -32,10 +31,7 @@ public final class JDBC_Util {
 
     private static void initConnectionPool() {
 
-        var poolSize = PropertiesRead_Util.get(POOL_SIZE_KEY);
-        var defaultPoolSize = PropertiesRead_Util.get(DEFAULT_POOL_SIZE_KEY);
-
-        var size = poolSize == null ? Integer.parseInt(defaultPoolSize) : Integer.parseInt(poolSize);
+        var size = Integer.parseInt(POOL);
 
         pool = new ArrayBlockingQueue<>(size);
         sourceConnections = new ArrayList<>(size);
@@ -64,11 +60,7 @@ public final class JDBC_Util {
     private static Connection open() {
 
         try {
-            return DriverManager.getConnection(
-                    PropertiesRead_Util.get(URL_KEY),
-                    PropertiesRead_Util.get(LOGIN_KEY),
-                    PropertiesRead_Util.get(PASSWORD_KEY)
-            );
+            return DriverManager.getConnection(URL, LOGIN, PASSWORD);
         } catch (SQLException e) {
             System.out.println("Не удалось получить соединение с БД");
             throw new RuntimeException(e);
